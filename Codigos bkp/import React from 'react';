@@ -1,0 +1,51 @@
+import React from 'react';
+import { useState,useEffect } from 'react';
+import Card from 'react-bootstrap/card';
+
+function Catalogo() {
+
+    const urlPath = () => {
+      return('/image/')
+    }
+    const [data, setData] = useState ([]);
+
+  const getProdutos = async() => {
+    fetch("http://localhost:9091/app_portal_vendedor/backend/index.php")
+    .then((response) => response.json())
+    .then((responseJson) => (
+      //console.log(responseJson),
+      setData(responseJson.records)
+    ));
+  }
+
+  useEffect(() => {
+    getProdutos();
+  }, [])
+
+  return (
+    <div>
+
+    
+
+        <div className='cardContainer'>               
+          {Object.values(data).map(produto => (      
+          <div key={produto.MATFANTASIA}>
+            <div className='imageContainer'>
+              <img src={urlPath()+produto.IMAGEM} />
+            </div>
+           <div className='containerProduto'> 
+            <h4>{produto.APELIDO}</h4>
+            <h5>{produto.COR}</h5>
+            <h6>{produto.MATFANTASIA}</h6>
+            <h4><b>{produto.QTD}</b></h4>
+            </div>
+          </div>
+          ))}
+        </div>
+     
+    </div>
+
+  )  
+}
+
+export default Catalogo

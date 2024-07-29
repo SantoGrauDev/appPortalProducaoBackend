@@ -1,0 +1,68 @@
+import React from 'react';
+import { useState,useEffect } from 'react';
+import './Card.css'
+import Cabecalho from './Cabecalho'
+
+function Card(){
+    
+        const urlPath = () => {
+            return('/image/')
+          }
+          const [data, setData] = useState ([]);
+      
+        const getProdutos = async() => {
+          fetch("http://localhost:9091/app_portal_server/backend/index.php")
+          .then((response) => response.json())
+          .then((responseJson) => (
+            //console.log(responseJson),
+            setData(responseJson.records)
+          ));
+        }
+      
+        useEffect(() => {
+          getProdutos();
+        }, [])
+        
+        const [busca, setBusca] = useState('');
+
+        return (
+          <div>  
+            <div><Cabecalho pagina="Catálogo de produtos"/>
+            </div>
+              <div className="containerInputBusca">
+                <input
+                className="inputBusca"
+                placeholder="Nome produto..."
+                type="text"
+                onChange={event => {setBusca(event.target.value)}}
+                />
+              </div>
+            
+
+              <div className="cardBusca">               
+                {Object.values(data).filter((val)=>{
+                  if (busca === "") {
+                    return val
+                  } else if (val.APELIDO.toUpperCase().includes(busca.toUpperCase())) {
+                    return val
+                  }
+                }).map((val, key) => {
+                  return (                                
+                <div className="descricaoProdutos" key={key}>
+                <img src={urlPath()+val.IMAGEM} />
+                  <h4>Nome: {val.APELIDO}</h4>
+                  <h5>Cor: {val.COR}</h5>
+                  <h5>Codigo: {val.MATFANTASIA}</h5>
+                  <h4>Estoque: <b>{val.QTD}</b></h4>                  
+                </div>
+                  );
+                  })}
+              </div>
+           
+          </div>
+      
+        )  
+    
+}
+
+export default Card
